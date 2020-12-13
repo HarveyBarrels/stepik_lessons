@@ -9,7 +9,8 @@ class LoginPage(BasePage):
         self.should_be_register_form()
 
     def should_be_login_url(self):
-        MainPage.go_to_login_page(self)
+        page = MainPage(self.browser, self.url)
+        page.go_to_login_page()
         curr_url = self.browser.current_url
         # реализуйте проверку на корректный url адрес
         assert "login" in curr_url, "Login url is incorrect"
