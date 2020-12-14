@@ -7,10 +7,10 @@ class ProductPage(BasePage):
         add_to_cart_btn = self.browser.find_element(*ProductPageLocators.ADD_TO_CART_BUTTON)
         add_to_cart_btn.click()
 
-    def check_add_to_cart_notification(self):
+    def check_add_to_cart_notification(self, expected_notification_text):
         actual_notification_text = self.browser.find_element(*ProductPageLocators.ADD_TO_CART_NOTIFICATION).text
-        expected_product_name = self.browser.find_element(*ProductPageLocators.PRODUCT_NAME_HEADER).text
-        assert expected_product_name in actual_notification_text, f"Product {expected_product_name} not added to cart"
+        #expected_product_name = self.browser.find_element(*ProductPageLocators.PRODUCT_NAME_HEADER).text
+        assert actual_notification_text == expected_notification_text, f"Product was not added to cart, got:{actual_notification_text}"
 
 
     def check_total_cart_sum(self):
