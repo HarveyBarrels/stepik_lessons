@@ -2,6 +2,9 @@ from .pages.product_page import ProductPage
 from .pages.locators import ProductPageLocators
 import pytest
 from .pages.login_page import LoginPage
+from .pages.basket_page import BasketPage
+from .pages.base_page import BasePage
+import time
 
 
 lang_dict = {
@@ -82,3 +85,41 @@ class TestProductPage:
         login_page = LoginPage(browser, browser.current_url)
         login_page.should_be_login_page()
 
+    def test_guest_cant_see_product_in_basket_opened_from_product_page(self, browser):
+        page = ProductPage(browser, product_link)
+        page.open()
+        page.go_to_basket_page()
+        cart_page = BasketPage(browser, browser.current_url)
+        cart_page.should_be_empty_cart_message()
+        cart_page.should_not_be_any_product_in_cart()
+
+@pytest.mark.user_tests
+class TestUserAddToBasketFromProductPage: #тесты для зарегистрированного пользователя
+
+    @pytest.fixture(scope="function", autouse=True)
+    def setup(self, browser):
+        page = ProductPage(browser, product_link)
+        page.open()
+        page.go_to_login_page()
+        login_page = LoginPage(browser, browser.current_url)
+        email = str(time.time()) + "@fakemail.org"
+        password = "testpassword"
+        login_page.register_new_user(email, password)
+        login_page.should_be_authorized_user()
+
+    def test_user_cant_see_success_message(self, browser):
+        # отрицательная проверка - отсутствие сообщения об успешном добавлении в корзину (на странице товара)
+        page = ProductPage(browser, product_link)
+        page.open()
+        result =  page.is_not_element_present(*ProductPageLocators.ADD_TO_CART_NOTIFICATION)
+        assert result, "Success message is present"
+
+    def test_user_can_add_product_to_basket(self, browser):
+        expected_product_name = "Coders at Work"
+        expected_notification_template = "{} has been added to your basket."
+        page = ProductPage(browser, product_link)
+        page.open()
+        page.add_product_to_cart()
+        expected_notification_text = expected_notification_template.format(expected_product_name)
+        page.check_add_to_cart_notification(expected_notification_text)
+        page.check_total_cart_sum()
