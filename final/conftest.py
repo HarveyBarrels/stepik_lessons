@@ -13,6 +13,7 @@ def pytest_addoption(parser):
 def browser(request):
     browser_name = request.config.getoption("browser_name")
     my_language = request.config.getoption("language")
+    my_language.lower()
     browser = None
     if browser_name == "chrome":
         my_options = Options()

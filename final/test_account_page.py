@@ -3,6 +3,7 @@ from final.pages.login_page import LoginPage
 from final.pages.account_page import AccountPage
 import pytest
 import time
+from .pages.lang_pack import lang_dict
 
 #Data
 link = "http://selenium1py.pythonanywhere.com/"
@@ -15,20 +16,17 @@ city = 'Somecity'
 post_code = '428000'
 country = 'RU'
 second_line = 'some 2nd line'
-third_line =  'some 3rd line'
+third_line = 'some 3rd line'
 state = 'some state'
 phone = '+74955556677'
 instructions = 'do something there'
-expected_create_msg = 'created'
-expected_update_msg = 'updated'
-
-del_profile_msg_template = 'Your profile has now been deleted'
-
 
 class TestAccountPage:
 
     def test_user_can_add_new_address(self, browser):
         #Arrange
+        page_lang = browser.user_language
+        expected_create_msg = lang_dict[page_lang]['expected_create_msg']
         page = MainPage(browser, link)
         page.open()
         page.go_to_login_page()
@@ -45,6 +43,8 @@ class TestAccountPage:
 
     def test_user_can_edit_address(self, browser):
         #Arrange
+        page_lang = browser.user_language
+        expected_update_msg = lang_dict[page_lang]['expected_update_msg']
         page = MainPage(browser, link)
         page.open()
         page.go_to_login_page()
@@ -60,6 +60,8 @@ class TestAccountPage:
 
     @pytest.mark.del_profile
     def test_user_can_delete_account(self, browser):
+        page_lang = browser.user_language
+        del_profile_msg_template = lang_dict[page_lang]['del_profile_msg_template']
         page = MainPage(browser, link)
         page.open()
         page.go_to_login_page()
